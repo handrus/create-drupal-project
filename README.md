@@ -16,5 +16,5 @@ Example:
 	 * $argv[2]: "/home/lrcarvalho/Projects/Code/drupaltest1". 
 	 	Folder path. Folder where thr project will be created and last version of Drupal will be downloaded
 
-Very very beta script. Seriously. Indeed. Fell free to test it.
+Seems a Stable version. Fell free to test it.
 Also, fell free to modify or change this script.
