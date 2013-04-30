@@ -37,7 +37,7 @@
 
 	exec("drush dl {$drupalVersion}");
 	exec("mv {$drupalVersion} {$argv[2]}");
-	exec("cd {$argv[2]};drush si -y --db-url=mysql://{$databaseUsername}:{$databasePassword}@127.0.0.1/{$argv[1]} --account-pass=admin --locale=pt_br --site-name=\"$argv[1]\"");
+	exec("cd {$argv[2]};drush si -y --db-url=mysql://{$databaseUsername}:{$databasePassword}@127.0.0.1/{$argv[1]} --account-pass=admin --locale=en_us --site-name=\"$argv[1]\"");
 	
 	$template = "<VirtualHost *:80>\n";
 	$template .= "ServerName {$argv[1]}\n";
