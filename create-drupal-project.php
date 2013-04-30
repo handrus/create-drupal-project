@@ -37,8 +37,8 @@
 
 	exec("drush dl {$drupalVersion}");
 	exec("mv {$drupalVersion} {$argv[2]}");
-	writeSettingsFile($argv[2], $argv[1]);	
-
+	exec("cd {$argv[2]};drush si -y --db-url=mysql://{$databaseUsername}:{$databasePassword}@127.0.0.1/{$argv[1]} --account-pass=admin --locale=pt_br --site-name=\"$argv[1]\"");
+	
 	$template = "<VirtualHost *:80>\n";
 	$template .= "ServerName {$argv[1]}\n";
 	$template .= "DocumentRoot {$argv[2]}\n";
@@ -48,7 +48,7 @@
 	$template .= "	Order allow,deny\n";
 	$template .= "	allow from all\n";
 	$template .= "</Directory>\n";
-    	$template .= "ErrorLog /var/log/apache2/{$argv[1]}_error.log\n";
+    $template .= "ErrorLog /var/log/apache2/{$argv[1]}_error.log\n";
 	$template .= "   LogLevel warn\n";
 	$template .= "    CustomLog /var/log/apache2/{$argv[1]}_access.log combined\n";
 	$template .= "</VirtualHost>\n";
@@ -71,48 +71,6 @@
 	//Change the forlder permission to enable Drupal install script to create necessary files
 	exec("chmod -R 777 {$argv[2]}");
 
-	//Create local database
-	exec("mysqladmin -u {$databaseUsername} -p{$databasePassword} create {$argv[1]}");
-	
 	echo 'Created with success the config for: ', $argv[1]; 
-	echo "\nPlease access in your browser http://{$argv[1]}/install.php, folow the steps to fisnish the instalation\n"; 
-
-
-	function writeSettingsFile($projectdirectory, $projectName) {
-		GLOBAL $databaseUsername;
-		GLOBAL $databasePassword;
-		$source= "{$projectdirectory}" . DIRECTORY_SEPARATOR . "sites" . DIRECTORY_SEPARATOR . "default" . DIRECTORY_SEPARATOR . "default.settings.php";
-		$target= "{$projectdirectory}" . DIRECTORY_SEPARATOR . "sites" . DIRECTORY_SEPARATOR . "default" . DIRECTORY_SEPARATOR . "settings.php";
-
-		// copy operation
-		$sh=fopen($source, 'r');
-		$th=fopen($target, 'w');
-		while (!feof($sh)) {
-		    $line=fgets($sh);
-		    if (strpos($line, '$databases = array();')!==false) {
-		        $line  = '$databases = array ('. PHP_EOL;
-		        $line .= '	\'default\' => '. PHP_EOL;
-		        $line .= '		array ('. PHP_EOL;
-		        $line .= '			\'default\' => '. PHP_EOL;
-		        $line .= '				array ('. PHP_EOL;	
-		        $line .= '					\'database\' => \'' . $projectName . '\','. PHP_EOL;
-		        $line .= '					\'username\' => \'' . $databaseUsername . '\','. PHP_EOL;
-		        $line .= '					\'password\' => \'' . $databasePassword . '\','. PHP_EOL;
-		        $line .= '					\'host\' => \'127.0.0.1\','. PHP_EOL;
-		        $line .= '					\'port\' => \'\','. PHP_EOL;
-		        $line .= '					\'driver\' => \'mysql\','. PHP_EOL;
-		        $line .= '					\'prefix\' => \'\','. PHP_EOL;
-		        $line .= '				),'. PHP_EOL;
-		        $line .= '		),'. PHP_EOL;
-						$line .= ');'. PHP_EOL;
-				
-				echo "Settings database configuration: \n$line";
-  		    }
-
-		    fwrite($th, $line);
-		}
-
-		fclose($sh);
-		fclose($th);
-	}
+	echo "\nPlease access in your browser http://{$argv[1]}. Your local environment is ready to use.\n"; 
 ?>
